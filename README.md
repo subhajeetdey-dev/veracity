@@ -1,36 +1,59 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Veracity
 
-## Getting Started
+Every story, cross-checked.
 
-First, run the development server:
+Veracity is a daily news application that does more than list headlines. Each story is automatically summarized and translated, then cross-referenced against multiple independent outlets to gauge how well it's corroborated — shown as a simple corroboration meter — with direct links to the original sources so readers can verify anything themselves.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Rather than stamping stories "true" or "false," Veracity shows its work: how many independent sources confirm a claim, and where to read them. An automated system can't reliably decide what's true, but it can measure corroboration and surface the evidence — which is both more honest and more useful.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Features
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Learn More
+Summaries — every article condensed to a few clear sentences.
+Translation — read summaries in your preferred language.
+Proof links — every story keeps a direct link to its original source.
+Corroboration meter — a signal-strength–style gauge showing how many independent sources confirm a story, from High corroboration down to Unverified.
+Daily feed — fresh articles pulled automatically from a news API.
 
-To learn more about Next.js, take a look at the following resources:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+How it works
 
-## Deploy on Vercel
+News sources  ->  Daily ingestion  ->  AI enrichment  ->  Corroboration  ->  Database  ->  Website
+ (APIs/RSS)       (fetch + store)     (summarize +        (cross-check       (article,      (reader
+                                       translate)          + score)           links, score)  feed)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+A scheduled job fetches the latest articles from a news API and stores them, keeping each article's original URL as proof.
+Summaries and translations are generated on demand by a language model.
+The corroboration step searches for the same story across independent outlets and fact-check databases, then produces a corroboration level and source count — never a bare "true/false" verdict.
+The frontend displays the feed, each card carrying its summary, corroboration meter, and source link.
+
+
+
+Tech stack
+
+LayerChoiceFrameworkNext.js (App Router)LanguageTypeScriptDatabasePostgreSQLORMPrisma 7 (with the @prisma/adapter-pg driver adapter)StylingTailwind CSS + custom CSS design tokensFontsLibre Franklin (display), Source Serif 4 (body), IBM Plex Mono (data)News dataNewsData.io APIAILLM API for summarization, translation, and corroboration reasoning
+
+
+Project structure
+
+veracity/
+├── prisma/
+│   └── schema.prisma          # Article, Summary, Translation models
+├── scripts/
+│   └── fetchNews.ts           # Fetches and stores the latest articles
+├── src/
+│   ├── app/
+│   │   ├── layout.tsx         # Page shell, fonts, header/footer
+│   │   ├── page.tsx           # The news feed
+│   │   └── globals.css        # Design tokens and component styles
+│   ├── components/
+│   │   └── ArticleCard.tsx    # Article card + corroboration meter
+│   └── lib/
+│       ├── prisma.ts          # Prisma client (with pg driver adapter)
+│       └── news.ts            # News API client + storage logic
+├── .env                       # Secrets (not committed)
+└── package.json
+
