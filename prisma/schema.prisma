@@ -1,0 +1,40 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Article {
+  id           String        @id @default(cuid())
+  externalId   String        @unique
+  title        String
+  description  String?
+  content      String?
+  sourceUrl    String
+  sourceName   String?
+  publishedAt  DateTime?
+  fetchedAt    DateTime      @default(now())
+  summary      Summary?
+  translations Translation[]
+}
+
+model Summary {
+  id        String   @id @default(cuid())
+  articleId String   @unique
+  article   Article  @relation(fields: [articleId], references: [id])
+  text      String
+  createdAt DateTime @default(now())
+}
+
+model Translation {
+  id        String   @id @default(cuid())
+  articleId String
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  language  String
+  text      String
+  createdAt DateTime @default(now())
+
+  @@unique([articleId, language])
+}
