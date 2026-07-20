@@ -2,6 +2,19 @@
   "name": "veracity",
   "version": "0.1.0",
   "private": true,
+  "description": "Veracity",
+  "homepage": "https://github.com/subhajeetdey-dev/veracity#readme",
+  "bugs": {
+    "url": "https://github.com/subhajeetdey-dev/veracity/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/subhajeetdey-dev/veracity.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "index.js",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
